@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>种子管理系统</title>
+    <style>
+        /* 时间显示样式 */
+        .datetime-display {
+            font-size: 20px;
+            font-weight: 500;
+            color: #2c3e50;
+            padding: 10px 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin: 0;
+        }
+        
+        /* 标题样式 */
+        .page-title {
+            margin: 0;
+            text-align: left;
+        }
+        
+        /* 基础样式优化 */
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+            font-family: 'Microsoft YaHei', sans-serif;
+            margin: 0;
+            padding: 20px;
+            font-size: 14px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        
+        /* 标题样式优化 */
+        h1.page-title, h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        
+        /* 表格容器样式优化 */
+        .table-container {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        /* 表格样式优化 */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        th {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        /* 按钮样式优化 */
+        .btn {
+            border-radius: 5px;
+            padding: 0.375rem 0.75rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        
+        .btn-primary { 
+            background-color: #3498db; 
+            border-color: #3498db;
+            color: white;
+        }
+        .btn-primary:hover { 
+            background-color: #2980b9;
+            border-color: #2980b9;
+        }
+        
+        .btn-success { 
+            background-color: #2ecc71; 
+            border-color: #2ecc71;
+            color: white;
+        }
+        .btn-success:hover { 
+            background-color: #27ae60;
+            border-color: #27ae60;
+        }
+        
+        .btn-danger { 
+            background-color: #e74c3c; 
+            border-color: #e74c3c;
+            color: white;
+        }
+        .btn-danger:hover { 
+            background-color: #c0392b;
+            border-color: #c0392b;
+        }
+        
+        .btn-warning { 
+            background-color: #f1c40f; 
+            border-color: #f1c40f;
+            color: #fff;
+        }
+        .btn-warning:hover { 
+            background-color: #f39c12;
+            border-color: #f39c12;
+        }
+        
+        /* 弹窗样式优化 */
+        .modal-content {
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        
+        .input-group input:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 0.2rem rgba(52,152,219,0.25);
+            outline: none;
+        }
+        
+        /* 表格样式优化 */
+        .table-container {
+            overflow-x: auto;
+            margin-bottom: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 13px;
+        }
+        
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            line-height: 1.3;
+            white-space: nowrap;
+        }
+        
+        th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        /* 按钮组样式 */
+        .btn-group {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+        
+        .btn {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        
+        .btn-primary { background-color: #007bff; color: white; }
+        .btn-success { background-color: #28a745; color: white; }
+        .btn-danger { background-color: #dc3545; color: white; }
+        .btn-warning { background-color: #ffc107; color: black; }
+        
+        /* 弹窗样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            position: relative;
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .close {
+            position: absolute;
+            right: 15px;
+            top: 10px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        
+        /* 分页样式 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            margin: 20px 0;
+        }
+        
+        .pagination button {
+            padding: 4px 12px;
+            border: 1px solid #007bff;
+            background: #fff;
+            color: #007bff;
+            cursor: pointer;
+            border-radius: 3px;
+            font-size: 13px;
+            min-width: 40px;
+        }
+        
+        .pagination button:hover {
+            background: #e7f1ff;
+        }
+        
+        .pagination button.active {
+            background: #007bff;
+            color: white;
+        }
+        
+        .pagination button:disabled {
+            background: #f5f5f5;
+            border-color: #ddd;
+            color: #999;
+            cursor: not-allowed;
+        }
+        
+        /* 页面大小选择器 */
+        .page-size-selector {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .page-size-selector select {
+            padding: 4px 8px;
+            border-radius: 3px;
+            border: 1px solid #ddd;
+            font-size: 13px;
+        }
+        
+        /* 添加提示消息样式 */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .toast {
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            animation: fadeInOut 3s ease;
+            pointer-events: none;
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(-20px); }
+            10% { opacity: 1; transform: translateY(0); }
+            90% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-20px); }
+        }
+        
+        /* 修改表格列宽 */
+        table th,
+        table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            line-height: 1.3;
+            white-space: nowrap;
+        }
+        
+        /* ==================== 名称列宽度设置 ==================== */
+        table th:nth-child(2),
+        table td:nth-child(2) {
+            /* 名称列宽度设置为原来的一半 */
+            width: 120px;
+            min-width: 120px;
+            max-width: 120px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* ==================== 类型列宽度设置 ==================== */
+        table th:nth-child(3),
+        table td:nth-child(3) {
+            /* 类型列宽度设置为原来的四分之一 */
+            width: 75px;
+            min-width: 75px;
+            max-width: 75px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* 修改时间值输入框样式 */
+        input[type="text"] {
+            width: 30px;
+            padding: 4px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+
+        /* 表格样式进一步优化 */
+        .table-container {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        /* 按钮组样式优化 */
+        .btn-group {
+            display: inline-flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            font-size: 13px;
+            font-weight: 500;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 60px;
+        }
+
+        /* 分页样式优化 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .pagination button {
+            padding: 6px 12px;
+            border: 1px solid #dee2e6;
+            background: white;
+            color: #3498db;
+            font-size: 13px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            min-width: 40px;
+        }
+
+        .pagination button:hover:not(:disabled) {
+            background: #e7f2fd;
+            border-color: #3498db;
+        }
+
+        .pagination button.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        /* 页面大小选择器优化 */
+        .page-size-selector {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .page-size-selector select {
+            padding: 6px 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #2c3e50;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .page-size-selector select:hover {
+            border-color: #3498db;
+        }
+
+        /* 输入框样式优化 */
+        input[type="text"], input[type="url"] {
+            padding: 8px 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #2c3e50;
+            transition: all 0.2s;
+        }
+
+        input[type="text"]:focus, input[type="url"]:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52,152,219,0.15);
+            outline: none;
+        }
+
+        /* 提示消息样式优化 */
+        .toast {
+            background: rgba(52,152,219,0.95);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        /* 可编辑区域样式优化 */
+        [contenteditable="true"] {
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        [contenteditable="true"]:hover {
+            background-color: #f8f9fa;
+        }
+
+        [contenteditable="true"]:focus {
+            background-color: white;
+            box-shadow: 0 0 0 2px rgba(52,152,219,0.25);
+            outline: none;
+        }
+
+        /* 修改时间显示和标题布局 */
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        /* 修改弹窗输入框样式 */
+        .modal-content {
+            width: 90%;
+            max-width: 600px;
+            padding: 25px;
+        }
+
+        .input-group input[type="text"],
+        .input-group input[type="url"] {
+            width: 100%;
+            padding: 10px 15px;
+            margin-top: 5px;
+            min-width: 500px;
+        }
+
+        .form-label {
+            color: #2c3e50;
+            font-weight: 500;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .mb-3 {
+            margin-bottom: 20px;
+        }
+
+        /* 添加过滤按钮样式 */
+        .filter-buttons {
+            margin: 20px 0;
+        }
+
+        .filter-buttons .btn {
+            margin-right: 5px;
+        }
+
+        .filter-buttons .btn.active {
+            background-color: #007bff;
+            color: white;
+        }
+
+        /* 调整分页位置样式 */
+        .table-container .pagination {
+            margin-bottom: 15px;
+        }
+
+        /* 过滤按钮组样式优化 */
+        .filter-buttons {
+            display: inline-flex;
+            gap: 8px;
+            margin-left: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-buttons .btn {
+            padding: 6px 12px;
+            font-size: 13px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .filter-buttons .btn.active {
+            background-color: #3498db;
+            border-color: #3498db;
+            color: white;
+        }
+
+        .filter-buttons .btn-outline-primary {
+            border-color: #3498db;
+            color: #3498db;
+        }
+
+        .filter-buttons .btn-outline-primary:hover {
+            background-color: #3498db;
+            border-color: #3498db;
+            color: white;
+        }
+
+        .filter-buttons .btn-outline-secondary {
+            border-color: #95a5a6;
+            color: #95a5a6;
+        }
+
+        .filter-buttons .btn-outline-secondary:hover {
+            background-color: #95a5a6;
+            border-color: #95a5a6;
+            color: white;
+        }
+
+        /* 调整表格容器样式 */
+        .table-container {
+            margin-top: 20px;
+        }
+
+        .table-container .pagination {
+            margin: 0 0 15px 0;
+        }
+
+        /* nb 单元格样式 */
+        .nb-cell {
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            width: 80px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            position: relative;
+        }
+
+        .nb-cell:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* nb 选择器样式 */
+        .nb-selector {
+            width: 100px;
+            padding: 4px 8px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #2c3e50;
+            background-color: white;
+            position: absolute;
+            left: 0;
+            top: 100%;
+            z-index: 100;
+        }
+
+        .nb-selector:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52,152,219,0.25);
+            outline: none;
+        }
+
+        .nb-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .nb-options .btn {
+            width: 100%;
+            text-align: center;
+            padding: 8px;
+        }
+
+        .nb-cell {
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            width: 80px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .nb-cell:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* ==================== 种子管理表格样式 ==================== */
+        /* 种子管理名称列宽度 */
+        #seedTable th:nth-child(2),
+        #seedTable td:nth-child(2) {
+            width: 150px;
+            min-width: 150px;
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* 种子管理链接列宽度 */
+        #seedTable th:nth-child(3),
+        #seedTable td:nth-child(3) {
+             width: auto;
+            min-width: 420px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+</head>
+<body>
+    <!-- 添加时间显示区域 -->
+    <div id="datetimeDisplay" class="datetime-display"></div>
+    
+    <!-- 添加提示消息容器 -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <div class="container">
+        <div class="header-container">
+            <h1 class="page-title">URL管理系统</h1>
+            <div id="datetimeDisplay" class="datetime-display"></div>
+        </div>
+        
+        <!-- 添加URL按钮 -->
+        <button class="btn btn-primary" onclick="showAddUrlModal()">添加URL</button>
+        
+        <div class="btn-group filter-buttons" style="margin-left: 10px; display: inline-block;">
+            <button class="btn btn-outline-primary" onclick="filterByNb('国漫连载')">国漫连载</button>
+            <button class="btn btn-outline-primary" onclick="filterByNb('国漫')">国漫</button>
+            <button class="btn btn-outline-primary" onclick="filterByNb('每日更新')">每日更新</button>
+            <button class="btn btn-outline-primary" onclick="filterByNb('美剧')">美剧</button>
+            <button class="btn btn-outline-primary" onclick="filterByNb('关注')">关注</button>
+            <button class="btn btn-outline-primary" onclick="filterByNb('临时')">临时</button>
+            <button class="btn btn-outline-secondary" onclick="filterByNb('')">全部</button>
+        </div>
+        
+        <!-- URL管理分页控制 -->
+        <div class="page-size-selector">
+            <span>每页显示：</span>
+            <select onchange="changeUrlPageSize(this.value)">
+                <option value="5">5条/页</option>
+                <option value="10" selected>10条/页</option>
+                <option value="15">15条/页</option>
+                <option value="20">20条/页</option>
+                <option value="50">50条/页</option>
+                <option value="100">100条/页</option>
+            </select>
+        </div>
+        
+        <!-- URL列表 -->
+        <div class="table-container">
+            <div id="urlPagination" class="pagination"></div>
+            <table id="urlTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>名称</th>
+                        <th>类型</th>
+                        <th>URL</th>
+                        <th>时间值</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="urlTableBody"></tbody>
+            </table>
+        </div>
+        
+        <h2>种子管理</h2>
+        <div class="btn-group">
+            <button class="btn btn-warning" onclick="deduplicate()">去重</button>
+            <button class="btn btn-danger" onclick="clearAll()">清空所有</button>
+        </div>
+        
+        <!-- 种子管理分页控制 -->
+        <div class="page-size-selector">
+            <span>每页显示：</span>
+            <select onchange="changeSeedPageSize(this.value)">
+                <option value="5">5条/页</option>
+                <option value="10" selected>10条/页</option>
+                <option value="15">15条/页</option>
+                <option value="20">20条/页</option>
+                <option value="50">50条/页</option>
+                <option value="100">100条/页</option>
+            </select>
+        </div>
+        
+        <!-- 种子列表 -->
+        <div class="table-container">
+            <div id="seedPagination" class="pagination"></div>
+            <table id="seedTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>URL名称</th>
+                        <th>种子链接</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="seedTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 添加URL弹窗 -->
+    <div id="addUrlModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="hideAddUrlModal()">&times;</span>
+            <h2>添加新URL</h2>
+            <div class="input-group">
+                <div class="mb-3">
+                    <label class="form-label">URL名称</label>
+                    <input type="text" id="urlname" placeholder="请输入URL名称" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">URL地址</label>
+                    <input type="url" id="url" placeholder="请输入URL地址" class="form-control">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">分类</label>
+                    <select id="urlNb" class="form-control">
+                        <option value="">无</option>
+                        <option value="国漫连载">国漫连载</option>
+                        <option value="国漫">国漫</option>
+                        <option value="每日更新">每日更新</option>
+                        <option value="美剧">美剧</option>
+                        <option value="关注">关注</option>
+                        <option value="临时">临时</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="addUrl()">添加</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加类型选择弹窗 -->
+    <div id="nbSelectModal" class="modal">
+        <div class="modal-content" style="max-width: 300px;">
+            <span class="close" onclick="hideNbSelectModal()">&times;</span>
+            <h2>选择类型</h2>
+            <div class="nb-options">
+                <button class="btn btn-outline-primary" onclick="updateNbValue('', this)">无</button>
+                <button class="btn btn-outline-primary" onclick="updateNbValue('国漫连载', this)">国漫连载</button>
+                <button class="btn btn-outline-primary" onclick="updateNbValue('国漫', this)">国漫</button>
+                <button class="btn btn-outline-primary" onclick="updateNbValue('每日更新', this)">每日更新</button>
+                <button class="btn btn-outline-primary" onclick="updateNbValue('美剧', this)">美剧</button>
+                <button class="btn btn-outline-primary" onclick="updateNbValue('关注', this)">关注</button>
+                <button class="btn btn-outline-primary" onclick="updateNbValue('临时', this)">临时</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 更新时间显示
+        function updateDateTime() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth() + 1;
+            const date = now.getDate();
+            const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+            const weekday = weekdays[now.getDay()];
+            
+            document.getElementById('datetimeDisplay').textContent = 
+                `${year}年${month}月${date}日 周${weekday}`;
+        }
+        
+        // 每秒更新一次时间
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+
+        // URL相关功能
+        let currentNbFilter = '';
+
+        function filterByNb(nb) {
+            currentNbFilter = nb;
+            urlCurrentPage = 1;
+            loadUrls();
+            
+            // 更新按钮状态
+            document.querySelectorAll('.filter-buttons button').forEach(btn => {
+                if (btn.textContent === nb || (nb === '' && btn.textContent === '全部')) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        async function loadUrls() {
+            try {
+                const response = await fetch(
+                    `seed.php?action=getUrls&page=${urlCurrentPage}&pageSize=${urlPageSize}&nb=${encodeURIComponent(currentNbFilter)}`
+                );
+                const data = await response.json();
+                if (data.success) {
+                    displayUrls(data.urls);
+                    urlTotalPages = data.totalPages;
+                    updateUrlPagination();
+                }
+            } catch (error) {
+                console.error('加载URL失败:', error);
+            }
+        }
+
+        function displayUrls(urls) {
+            const tbody = document.getElementById('urlTableBody');
+            tbody.innerHTML = '';
+            
+            urls.forEach(url => {
+                const tr = document.createElement('tr');
+                tr.draggable = true;
+                tr.dataset.id = url.id;
+                
+                tr.innerHTML = `
+                    <td>${url.id}</td>
+                    <td class="editable" contenteditable="true" onblur="updateUrlname(${url.id}, this)">${url.urlname}</td>
+                    <td class="nb-cell" onclick="showNbSelector(this, ${url.id})">${url.nb || '无'}</td>
+                    <td>${url.url}</td>
+                    <td><input type="text" value="${url.tiam === '0' ? '' : url.tiam}" 
+                        onchange="updateTiam(${url.id}, this.value)"></td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="btn btn-primary" onclick="refreshUrl(${url.id})">刷新</button>
+                            <button class="btn btn-success" onclick="extractUrl(${url.id})">提取</button>
+                            <button class="btn btn-danger" onclick="deleteUrl(${url.id})">删除</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+            setupDragAndDrop();
+        }
+
+        // 拖拽排序功能
+        function setupDragAndDrop() {
+            const tbody = document.getElementById('urlTableBody');
+            let draggedItem = null;
+            
+            tbody.addEventListener('dragstart', e => {
+                draggedItem = e.target;
+                e.target.classList.add('dragging');
+            });
+            
+            tbody.addEventListener('dragend', e => {
+                e.target.classList.remove('dragging');
+            });
+            
+            tbody.addEventListener('dragover', e => {
+                e.preventDefault();
+                const tr = e.target.closest('tr');
+                if (tr && tr !== draggedItem) {
+                    const rect = tr.getBoundingClientRect();
+                    const mid = (rect.top + rect.bottom) / 2;
+                    if (e.clientY < mid) {
+                        tr.parentNode.insertBefore(draggedItem, tr);
+                    } else {
+                        tr.parentNode.insertBefore(draggedItem, tr.nextSibling);
+                    }
+                    updateSortOrder();
+                }
+            });
+        }
+
+        async function updateSortOrder() {
+            const rows = document.querySelectorAll('#urlTableBody tr');
+            const orders = Array.from(rows).map((row, index) => ({
+                id: row.dataset.id,
+                sort_order: index + 1
+            }));
+            
+            try {
+                await fetch('seed.php?action=updateOrder', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(orders)
+                });
+            } catch (error) {
+                console.error('更新排序失败:', error);
+            }
+        }
+
+        // 其他URL操作函数...
+        async function addUrl() {
+            const urlname = document.getElementById('urlname').value;
+            const url = document.getElementById('url').value;
+            const nb = document.getElementById('urlNb').value;
+            
+            if (!urlname || !url) {
+                alert('请填写完整信息');
+                return;
+            }
+            
+            try {
+                const response = await fetch('seed.php?action=addUrl', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ urlname, url, nb })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    hideAddUrlModal();
+                    loadUrls();
+                } else {
+                    alert('添加失败：' + data.message);
+                }
+            } catch (error) {
+                console.error('添加URL失败:', error);
+                alert('添加失败');
+            }
+        }
+
+        // URL 操作函数
+        async function updateUrlname(id, element) {
+            const newName = element.textContent;
+            try {
+                const response = await fetch('seed.php?action=rename', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ id, urlname: newName })
+                });
+                
+                const data = await response.json();
+                if (!data.success) {
+                    alert('重命名失败');
+                    loadUrls(); // 重新加载以恢复原值
+                }
+            } catch (error) {
+                console.error('重命名失败:', error);
+                loadUrls();
+            }
+        }
+
+        async function updateTiam(id, value) {
+            try {
+                const response = await fetch('seed.php?action=updateTiam', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ id, tiam: value })
+                });
+                
+                const data = await response.json();
+                if (!data.success) {
+                    alert('更新时间值失败');
+                    loadUrls();
+                }
+            } catch (error) {
+                console.error('更新时间值失败:', error);
+                loadUrls();
+            }
+        }
+
+        async function deleteUrl(id) {
+            if (!confirm('确定要删除这个URL吗？')) return;
+            
+            try {
+                const response = await fetch('seed.php?action=delete', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ id })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    loadUrls();
+                } else {
+                    alert('删除失败');
+                }
+            } catch (error) {
+                console.error('删除失败:', error);
+            }
+        }
+
+        // 刷新和提取功能
+        async function refreshUrl(id) {
+            const button = event.target;
+            if (button.disabled) return;
+            
+            try {
+                button.disabled = true;
+                
+                const response = await fetch(`sxin.php?action=refresh&urlId=${id}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast(data.message);
+                    loadSeeds();
+                } else {
+                    showToast('刷新失败：' + data.message);
+                }
+            } catch (error) {
+                console.error('刷新失败:', error);
+                showToast('刷新操作失败');
+            } finally {
+                button.disabled = false;
+            }
+        }
+
+        async function extractUrl(id) {
+            const button = event.target;
+            if (button.disabled) return;
+            
+            try {
+                button.disabled = true;
+                
+                const response = await fetch(`tqu.php?urlId=${id}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast(data.message);
+                    loadSeeds();
+                } else {
+                    showToast('提取失败：' + data.message);
+                }
+            } catch (error) {
+                console.error('提取失败:', error);
+                showToast('提取操作失败');
+            } finally {
+                button.disabled = false;
+            }
+        }
+
+        // 种子管理功能
+        async function loadSeeds() {
+            try {
+                const response = await fetch(`sxin.php?action=getSeeds&page=${seedCurrentPage}&pageSize=${seedPageSize}`);
+                const data = await response.json();
+                if (data.success) {
+                    displaySeeds(data.seeds);
+                    seedTotalPages = data.totalPages;
+                    updateSeedPagination();
+                }
+            } catch (error) {
+                console.error('加载种子失败:', error);
+            }
+        }
+
+        function displaySeeds(seeds) {
+            const tbody = document.getElementById('seedTableBody');
+            tbody.innerHTML = '';
+            
+            seeds.forEach(seed => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${seed.id}</td>
+                    <td>${seed.urlname}</td>
+                    <td>${seed.me}</td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="btn btn-success" onclick="saveSeed(${seed.id})">保存</button>
+                            <button class="btn btn-primary" onclick="copySeedLink(this)" data-link="${seed.me}">复制</button>
+                            <button class="btn btn-danger" onclick="deleteSeed(${seed.id})">删除</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function saveSeed(id) {
+            try {
+                const response = await fetch(`now.php?action=saveSeed&id=${id}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast(data.message);
+                    loadSeeds();
+                } else {
+                    showToast('保存失败：' + data.message);
+                }
+            } catch (error) {
+                console.error('保存失败:', error);
+                showToast('保存操作失败');
+            }
+        }
+
+        async function deleteSeed(id) {
+            try {
+                const response = await fetch(`sxin.php?action=deleteSeed&id=${id}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast(data.message);
+                    loadSeeds();
+                } else {
+                    showToast('删除失败：' + data.message);
+                }
+            } catch (error) {
+                console.error('删除失败:', error);
+                showToast('删除操作失败');
+            }
+        }
+
+        // 去重和清空功能
+        async function deduplicate() {
+            try {
+                const response = await fetch('qc.php');
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast(data.message);
+                    loadSeeds();
+                } else {
+                    showToast('去重失败：' + data.message);
+                }
+            } catch (error) {
+                console.error('去重失败:', error);
+                showToast('去重操作失败');
+            }
+        }
+
+        async function clearAll() {
+            try {
+                const response = await fetch('now.php?action=clearAll');
+                const data = await response.json();
+                
+                if (data.success) {
+                    showToast(data.message);
+                    loadSeeds();
+                } else {
+                    showToast('清空失败：' + data.message);
+                }
+            } catch (error) {
+                console.error('清空失败:', error);
+                showToast('清空操作失败');
+            }
+        }
+
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUrls();
+            loadSeeds();
+            updateDateTime();
+        });
+
+        // 分页相关变量
+        let urlCurrentPage = 1;
+        let urlPageSize = 10;
+        let urlTotalPages = 1;
+        let seedCurrentPage = 1;
+        let seedPageSize = 10;
+        let seedTotalPages = 1;
+
+        // 弹窗控制
+        function showAddUrlModal() {
+            document.getElementById('addUrlModal').style.display = 'block';
+        }
+
+        function hideAddUrlModal() {
+            document.getElementById('addUrlModal').style.display = 'none';
+            document.getElementById('urlname').value = '';
+            document.getElementById('url').value = '';
+        }
+
+        // 分页控制函数
+        function changeUrlPageSize(size) {
+            urlPageSize = parseInt(size);
+            urlCurrentPage = 1;
+            loadUrls();
+        }
+
+        function changeSeedPageSize(size) {
+            seedPageSize = parseInt(size);
+            seedCurrentPage = 1;
+            loadSeeds();
+        }
+
+        // 分页控制UI
+        function updateUrlPagination() {
+            const pagination = document.getElementById('urlPagination');
+            pagination.innerHTML = generatePaginationHTML(urlCurrentPage, urlTotalPages, 'changeUrlPage');
+        }
+
+        function updateSeedPagination() {
+            const pagination = document.getElementById('seedPagination');
+            pagination.innerHTML = generatePaginationHTML(seedCurrentPage, seedTotalPages, 'changeSeedPage');
+        }
+
+        function generatePaginationHTML(currentPage, totalPages, changeFunc) {
+            let html = `
+                <button onclick="${changeFunc}(1)" 
+                        class="btn btn-primary" 
+                        ${currentPage === 1 ? 'disabled' : ''}>首页</button>
+                <button onclick="${changeFunc}(${currentPage - 1})" 
+                        class="btn btn-primary"
+                        ${currentPage === 1 ? 'disabled' : ''}>上一页</button>
+            `;
+
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, startPage + 4);
+            
+            if (endPage - startPage < 4 && startPage > 1) {
+                startPage = Math.max(1, endPage - 4);
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                html += `
+                    <button onclick="${changeFunc}(${i})" 
+                            class="btn ${i === currentPage ? 'btn-primary active' : 'btn-outline-primary'}">${i}</button>
+                `;
+            }
+
+            html += `
+                <button onclick="${changeFunc}(${currentPage + 1})" 
+                        class="btn btn-primary"
+                        ${currentPage === totalPages ? 'disabled' : ''}>下一页</button>
+                <button onclick="${changeFunc}(${totalPages})" 
+                        class="btn btn-primary"
+                        ${currentPage === totalPages ? 'disabled' : ''}>尾页</button>
+            `;
+
+            return html;
+        }
+
+        function changeUrlPage(page) {
+            urlCurrentPage = page;
+            loadUrls();
+        }
+
+        function changeSeedPage(page) {
+            seedCurrentPage = page;
+            loadSeeds();
+        }
+
+        // 点击弹窗外部关闭弹窗
+        window.onclick = function(event) {
+            const urlModal = document.getElementById('addUrlModal');
+            const nbModal = document.getElementById('nbSelectModal');
+            
+            if (event.target === urlModal) {
+                hideAddUrlModal();
+            } else if (event.target === nbModal) {
+                hideNbSelectModal();
+            }
+        }
+
+        // 添加显示提示消息的函数
+        function showToast(message) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            container.appendChild(toast);
+            
+            // 3秒后自动移除提示
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // 添加新的函数用于显示和处理 nb 选择器
+        let currentEditingCell = null;
+        let currentEditingId = null;
+
+        function showNbSelector(cell, urlId) {
+            currentEditingCell = cell;
+            currentEditingId = urlId;
+            document.getElementById('nbSelectModal').style.display = 'block';
+        }
+
+        function hideNbSelectModal() {
+            document.getElementById('nbSelectModal').style.display = 'none';
+            currentEditingCell = null;
+            currentEditingId = null;
+        }
+
+        async function updateNbValue(newValue, button) {
+            if (!currentEditingCell || !currentEditingId) return;
+            
+            try {
+                const response = await fetch('seed.php?action=updateNb', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: currentEditingId, nb: newValue })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    hideNbSelectModal();
+                    loadUrls(); // 刷新页面显示
+                } else {
+                    showToast('更新类型失败');
+                }
+            } catch (error) {
+                console.error('更新类型失败:', error);
+                showToast('更新类型失败');
+            }
+        }
+
+        // 添加复制功能函数
+        async function copySeedLink(button) {
+            const link = button.getAttribute('data-link');
+            try {
+                await navigator.clipboard.writeText(link);
+                showToast('链接已复制到剪贴板');
+            } catch (err) {
+                // 如果 navigator.clipboard 不可用，使用传统方法
+                const textarea = document.createElement('textarea');
+                textarea.value = link;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                try {
+                    document.execCommand('copy');
+                    showToast('链接已复制到剪贴板');
+                } catch (err) {
+                    showToast('复制失败，请手动复制');
+                }
+                document.body.removeChild(textarea);
+            }
+        }
+    </script>
+</body>
+</html>
